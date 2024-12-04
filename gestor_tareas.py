@@ -8,7 +8,7 @@ import threading
 from plyer import notification
 
 # Lista para almacenar las tareas
-tareas = []
+ARCHIVO_TAREAS = "tareas.json"
 
 # Crear la ventana principal de la aplicación
 root = tk.Tk()
