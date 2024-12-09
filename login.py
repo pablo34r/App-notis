@@ -4,25 +4,25 @@ import subprocess
 import json
 import os
 
-# Archivo para almacenar usuarios
+
 ARCHIVO_USUARIOS = "usuarios.json"
 
-# Verificar si el archivo de usuarios existe
+
 if not os.path.exists(ARCHIVO_USUARIOS):
     with open(ARCHIVO_USUARIOS, "w") as file:
         json.dump({}, file)
 
-# Función para cargar usuarios
+
 def cargar_usuarios():
     with open(ARCHIVO_USUARIOS, "r") as file:
         return json.load(file)
 
-# Función para guardar usuarios
+
 def guardar_usuarios(usuarios):
     with open(ARCHIVO_USUARIOS, "w") as file:
         json.dump(usuarios, file)
 
-# Función para centrar la ventana
+
 def centrar_ventana(ventana, ancho, alto):
     pantalla_ancho = ventana.winfo_screenwidth()
     pantalla_alto = ventana.winfo_screenheight()
@@ -30,7 +30,7 @@ def centrar_ventana(ventana, ancho, alto):
     y = (pantalla_alto // 2) - (alto // 2)
     ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
 
-# Interfaz de registro
+
 def registrar_usuario():
     def registrar():
         username = entry_usuario.get()
@@ -62,7 +62,7 @@ def registrar_usuario():
 
     ttk.Button(ventana_registro, text="Registrar", command=registrar, style="TButton").pack(pady=20)
 
-# Interfaz de login
+
 def login():
     def iniciar_sesion():
         username = entry_usuario.get()
@@ -93,5 +93,4 @@ def login():
 
     ventana_login.mainloop()
 
-# Ejecutar la interfaz de login al inicio
 login()

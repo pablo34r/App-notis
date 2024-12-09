@@ -7,41 +7,51 @@ import os
 import threading
 from plyer import notification
 
-# Lista para almacenar las tareas
+
 ARCHIVO_TAREAS = "tareas.json"
 
-# Crear la ventana principal de la aplicación
+def centrar_ventana(ventana, ancho_ventana, alto_ventana):
+    ventana.update_idletasks()
+    ancho_pantalla = ventana.winfo_screenwidth()
+    alto_pantalla = ventana.winfo_screenheight()
+    x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+    y = (alto_pantalla // 2) - (alto_ventana // 2)
+    ventana.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
 root = tk.Tk()
+root.withdraw()  
 root.title("Gestión de Tareas Diarias")
 root.geometry("600x700")
+centrar_ventana(root, 600, 700)
+root.deiconify() 
 
-# Variable global para la fecha seleccionada
+
 fecha_seleccionada = tk.StringVar()
-hora_seleccionada = tk.StringVar()  # Para almacenar la hora seleccionada
+hora_seleccionada = tk.StringVar()  
 modo_claro = tk.BooleanVar(value=True)
 
-# Función para configurar el estilo (temas claro y oscuro)
+
 def configurar_estilo(claro=True):
     style = ttk.Style()
     style.theme_use("clam")
     if claro:
-        root.configure(bg="#f7f7f7")  # Fondo claro
+        root.configure(bg="#f7f7f7") 
         style.configure("TButton", background="#4CAF50", foreground="white")
         style.configure("TLabel", background="#f7f7f7", foreground="#333")
         lista_tareas.config(bg="#f9f9f9", fg="#333")
     else:
-        root.configure(bg="#333")  # Fondo oscuro
+        root.configure(bg="#333") 
         style.configure("TButton", background="#666", foreground="white")
         style.configure("TLabel", background="#333", foreground="#EEE")
         lista_tareas.config(bg="#444", fg="#FFF")
 
-# Crear el Listbox para las tareas
+
 lista_tareas = tk.Listbox(root, height=10, width=80)
 lista_tareas.pack(pady=20)
 
 configurar_estilo()
 
-# Función para abrir el calendario y seleccionar una fecha
+
 def abrir_calendario():
     def seleccionar_fecha():
         fecha_seleccionada.set(calendario.get_date())
@@ -49,11 +59,24 @@ def abrir_calendario():
 
     ventana_calendario = tk.Toplevel(root)
     ventana_calendario.title("Seleccionar Fecha")
+    ventana_calendario.resizable(False, False)
+
+    ventana_calendario.update_idletasks()
+    ancho_ventana = 300  
+    alto_ventana = 300   
+    ancho_pantalla = ventana_calendario.winfo_screenwidth()
+    alto_pantalla = ventana_calendario.winfo_screenheight()
+    x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+    y = (alto_pantalla // 2) - (alto_ventana // 2)
+    ventana_calendario.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
+    
     calendario = Calendar(ventana_calendario, date_pattern="yyyy-mm-dd")
     calendario.pack(pady=10)
     ttk.Button(ventana_calendario, text="Seleccionar", command=seleccionar_fecha).pack(pady=10)
 
-# Función para agregar una tarea
+
+
 def agregar_tarea():
     descripcion = entry_tarea.get("1.0", tk.END).strip()
     fecha = fecha_seleccionada.get()
@@ -87,7 +110,7 @@ def agregar_tarea():
     else:
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios excepto repetición.")
 
-# Función para editar una tarea
+
 def editar_tarea():
     try:
         tarea_seleccionada = lista_tareas.curselection()
@@ -108,7 +131,7 @@ def editar_tarea():
     except IndexError:
         messagebox.showwarning("Advertencia", "Por favor, selecciona una tarea para editar.")
 
-# Función para eliminar una tarea
+
 def eliminar_tarea():
     try:
         tarea_seleccionada = lista_tareas.curselection()
@@ -118,7 +141,7 @@ def eliminar_tarea():
     except IndexError:
         messagebox.showwarning("Advertencia", "Por favor, selecciona una tarea para eliminar.")
 
-# Función para marcar una tarea como completada
+
 def completar_tarea():
     try:
         tarea_seleccionada = lista_tareas.curselection()
@@ -130,12 +153,12 @@ def completar_tarea():
     except IndexError:
         messagebox.showwarning("Advertencia", "Por favor, selecciona una tarea para completar.")
 
-# Función para alternar el modo oscuro
+
 def alternar_modo():
     modo_claro.set(not modo_claro.get())
     configurar_estilo(claro=modo_claro.get())
 
-# Función para actualizar la lista visual
+
 def actualizar_lista():
     lista_tareas.delete(0, tk.END)
     for tarea in tareas:
@@ -145,19 +168,19 @@ def actualizar_lista():
         )
         lista_tareas.insert(tk.END, tarea_str)
 
-# Función para guardar las tareas en un archivo JSON
+
 def guardar_tareas():
     with open("tareas.json", "w") as file:
         json.dump(tareas, file)
 
-# Función para cargar las tareas desde un archivo JSON
+
 def cargar_tareas():
     if os.path.exists("tareas.json"):
         with open("tareas.json", "r") as file:
             return json.load(file)
     return []
 
-# Función para notificar sobre la tarea programada
+
 def notificar_tarea(tarea):
     fecha_tarea = datetime.strptime(tarea["fecha"] + " " + tarea["hora"], "%Y-%m-%d %H:%M")
     ahora = datetime.now()
@@ -174,11 +197,11 @@ def notificar_tarea(tarea):
 
         threading.Timer(tiempo_restante, mostrar_notificacion).start()
 
-# Etiqueta de título
+
 titulo = tk.Label(root, text="Gestión de Tareas Diarias", font=("Helvetica", 16))
 titulo.pack(pady=10)
 
-# Formulario de entrada para agregar tareas
+
 frame_inputs = tk.Frame(root)
 frame_inputs.pack(pady=10)
 
@@ -213,7 +236,7 @@ ttk.Button(frame_botones, text="Completar Tarea", command=completar_tarea).pack(
 btn_modo = ttk.Button(root, text="Alternar Modo Claro/Oscuro", command=alternar_modo)
 btn_modo.pack(pady=10)
 
-# Cargar las tareas al iniciar
+
 tareas = cargar_tareas()
 actualizar_lista()
 
